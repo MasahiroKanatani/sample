@@ -1,0 +1,28 @@
+Release Production <%= ENV["NEW_VERSION"] %>
+<% 
+label_names = { 
+  'external-requirement' => '⚠️ External Requirements',
+  'iac' => '⚙️ Terraform Apply Required',
+  'enhancement' => '🚀 Features', 
+  'bug' => '🐛 Bug Fixes', 
+  'dependencies' => '📦️ Dependency Updates', 
+  'other' => '🛠 Maintenance' 
+} 
+# 'other'以外のキーを配列として保持
+KNOWN_LABELS = label_names.keys.reject { |key| key == 'other' }
+-%>
+<% label_names.each do |label_name, label_display_name| -%>
+  <% filtered_prs = pull_requests.select do |pr|
+    if label_name == 'other'
+      pr.labels.none? { |label| KNOWN_LABELS.include?(label.name) }
+    else
+      pr.labels.any? { |label| label.name == label_name }
+    end
+  end -%>
+  <% next if filtered_prs.empty? -%>
+
+### <%= label_display_name %>
+  <% filtered_prs.each do |pr| -%>
+- #<%=  pr.number %> <%= pr.mention %>
+  <% end -%>
+<% end -%>
