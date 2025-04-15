@@ -1,10 +1,49 @@
+name: Versioning
 on:
+  workflow_dispatch:
   pull_request_review:
     types: [submitted]
+  pull_request:
+      types: [closed]
+      branches:
+        - main
 
 jobs:
-  approved:
+  update-version:
     if: github.event.pull_request.base.ref == 'main' && github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This PR was approved" # test
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Update version
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref }}  
+          NEW_VERSION=$(npm --no-git-tag-version version minor)
+          sed -i "s/NEXT_PUBLIC_APP_VERSION=.*/NEXT_PUBLIC_APP_VERSION=$NEW_VERSION/" .env
+          git add .
+          git commit -m "Bump version to $NEW_VERSION"
+          git push origin ${{ github.event.pull_request.head.ref }}
+  merge-and-tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      - name: Create and push tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a v${{ steps.get_version.outputs.VERSION }} -m "Release v${{ steps.get_version.outputs.VERSION }}"
+          git push origin v${{ steps.get_version.outputs.VERSION }}
