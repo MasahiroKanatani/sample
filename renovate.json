@@ -6,7 +6,7 @@
   "packageRules": [
     {
       "groupName": "Terraform",
-      "matchManagers": ["terraform"],
+      "matchManagers": ["terraform-version", "terraform"],
       "automerge": false,
       "addLabels": ["iac"]
     }
