@@ -3,14 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "packageRules": [
-    {
-      "groupName": "Terraform",
-      "matchManagers": ["terraform", "terraform-version"],
-      "automerge": false,
-      "addLabels": ["iac"]
-    }
-  ],
   "major": {
     "stabilityDays": 7,
   },
