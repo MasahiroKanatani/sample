@@ -3,21 +3,21 @@
   "extends": [
     "config:recommended"
   ],
-  packageRules: [
+  "packageRules": [
     {
-      groupName: "Terraform",
-      matchManagers: ["terraform", "terraform-version"],
-      automerge: false,
-      addLabels: ["iac"]
+      "groupName": "Terraform",
+      "matchManagers": ["terraform", "terraform-version"],
+      "automerge": false,
+      "addLabels": ["iac"]
     }
   ],
-  major: {
-    stabilityDays: 7,
+  "major": {
+    "stabilityDays": 7,
   },
-  minor: {
-    stabilityDays: 3,
+  "minor": {
+    "stabilityDays": 3,
   },
-  patch: {
-    stabilityDays: 2,
+  "patch": {
+    "stabilityDays": 2,
   }
 }
