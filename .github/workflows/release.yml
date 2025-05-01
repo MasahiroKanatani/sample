@@ -35,3 +35,24 @@ jobs:
             console.log(JSON.stringify(context, null,2))
             console.log(JSON.stringify(github, null,2))
             console.log(JSON.stringify(core, null,2))
+
+            const actor = context.actor;
+
+            let issueTitle = "";
+            let issueBody = "";
+
+            switch(context.eventName) {
+              case "release":
+                issueTitle = `:rocket: Release ${ context.payload.release.name }`;
+                issueBody = `${ context.payload.release.body }
+            - ${ context.payload.release.html_url }`;
+                break;
+              case "workflow_dispatch":
+                issueTitle = ":ambulance: Manual Deploy ${{ github.ref_name }}";
+                issueBody = `## 確認事項
+            - [ ] :warning: 本番環境に対して手動でのデプロイを実施します。
+            - [ ] デプロイ対象のタグ: **${{ github.ref_name }}**`;
+                break;
+            }
+            console.log({issueTitle})
+            console.log({issueBody})
