@@ -29,8 +29,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/manual-approval
-        timeout-minutes: 10
       - uses: actions/github-script@v7
         with:
           script: |
