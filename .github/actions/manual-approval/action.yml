@@ -1,0 +1,53 @@
+name: Manual Approval
+description: 手動の承認を行うアクション
+
+inputs:
+  approvers:
+    description: Comma-delimited list of all required approvers.
+    required: false
+    default: "test,test2,test3"
+  minimum-approvals:
+    description: Minimum number of approvals required
+    default: 1
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v7
+      id: set_issue_title_body
+      name: "Set Issue Title & Body"
+      with:
+        script: |
+          const actor = context.actor;
+          const approvers = core.getInput('approvers');
+          console.log({ approvers });
+          const filteredApprovers = approvers.split(",").filter(approver => approver !== actor).join(",");
+          core.setOutput('APPROVERS', filteredApprovers);
+
+          let issueTitle = "";
+          let issueBody = "";
+
+          switch(context.eventName) {
+            case "release":
+              issueTitle = `:rocket: Release ${ context.payload.release.name }`;
+              issueBody = `${ context.payload.release.body }
+          - ${ context.payload.release.html_url }`;
+              break;
+            case "workflow_dispatch":
+              issueTitle = ":ambulance: Manual Deploy ${{ github.ref_name }}";
+              issueBody = `## 確認事項
+          - [ ] :warning: 本番環境に対して手動でのデプロイを実施します。
+          - [ ] デプロイ対象のタグ: **${{ github.ref_name }}**`;
+              break;
+          }
+
+          core.setOutput('ISSUE_TITLE', issueTitle);
+          core.setOutput('ISSUE_BODY', issueBody);
+    - uses: trstringer/manual-approval@v1
+      with:
+        secret: ${{ github.token }}
+        approvers: ${{ steps.set_issue_title_body.outputs.APPROVERS }}
+        minimum-approvals: ${{ inputs.minimum-approvals }}
+        issue-title: ${{ steps.set_issue_title_body.outputs.ISSUE_TITLE }}
+        issue-body: ${{ steps.set_issue_title_body.outputs.ISSUE_BODY }}
