@@ -16,6 +16,8 @@ runs:
   steps:
     - uses: actions/github-script@v7
       id: set_issue_title_body
+      env:
+        INPUT_APPROVERS: "${{ inputs.approvers }}"
       name: "Set Issue Title & Body"
       with:
         script: |
