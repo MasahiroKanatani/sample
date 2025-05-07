@@ -20,7 +20,6 @@ runs:
       with:
         script: |
           const actor = context.actor;
-          # const approvers = core.getInput('approvers');
           const approvers = "${{ inputs.approvers }}";
 
           console.log({ approvers });
@@ -46,10 +45,10 @@ runs:
 
           core.setOutput('ISSUE_TITLE', issueTitle);
           core.setOutput('ISSUE_BODY', issueBody);
-    - uses: trstringer/manual-approval@v1
-      with:
-        secret: ${{ github.token }}
-        approvers: ${{ steps.set_issue_title_body.outputs.APPROVERS }}
-        minimum-approvals: ${{ inputs.minimum-approvals }}
-        issue-title: ${{ steps.set_issue_title_body.outputs.ISSUE_TITLE }}
-        issue-body: ${{ steps.set_issue_title_body.outputs.ISSUE_BODY }}
+    # - uses: trstringer/manual-approval@v1
+    #   with:
+    #     secret: ${{ github.token }}
+    #     approvers: ${{ steps.set_issue_title_body.outputs.APPROVERS }}
+    #     minimum-approvals: ${{ inputs.minimum-approvals }}
+    #     issue-title: ${{ steps.set_issue_title_body.outputs.ISSUE_TITLE }}
+    #     issue-body: ${{ steps.set_issue_title_body.outputs.ISSUE_BODY }}
