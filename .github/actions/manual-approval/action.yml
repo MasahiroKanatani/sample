@@ -20,7 +20,9 @@ runs:
       with:
         script: |
           const actor = context.actor;
-          const approvers = core.getInput('approvers');
+          # const approvers = core.getInput('approvers');
+          const approvers = "${{ inputs.approvers }}";
+
           console.log({ approvers });
           const filteredApprovers = approvers.split(",").filter(approver => approver !== actor).join(",");
           core.setOutput('APPROVERS', filteredApprovers);
