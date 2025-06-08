@@ -69,7 +69,7 @@
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.5",
     "@vitejs/plugin-react": "4.3.4",
-    "happy-dom": "17.4.4",
+    "happy-dom": "17.6.3",
     "lefthook": "1.11.5",
     "openapi-typescript": "7.6.1",
     "orval": "7.7.0",
